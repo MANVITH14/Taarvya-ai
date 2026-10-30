@@ -2,6 +2,7 @@
 Taarvya AI — FastAPI Backend
 Configuration and settings management.
 """
+import os
 from functools import lru_cache
 from typing import List, Optional
 
@@ -24,8 +25,12 @@ class Settings(BaseSettings):
     log_level: str = "info"
     version: str = "1.0.0"
 
-    # Database (defaults to local SQLite for seamless testing/dev; overridden by env in Docker/prod)
-    database_url: str = "sqlite+aiosqlite:///./taarvya.db"
+    # Database (defaults to /tmp on Vercel or local SQLite for testing/dev; overridden by env in Docker/prod)
+    database_url: str = (
+        "sqlite+aiosqlite:////tmp/taarvya.db"
+        if os.environ.get("VERCEL")
+        else "sqlite+aiosqlite:///./taarvya.db"
+    )
 
     # Security
     secret_key: str = "CHANGE_ME_IN_PRODUCTION_USE_LONG_RANDOM_STRING"
